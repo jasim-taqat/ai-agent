@@ -289,14 +289,16 @@ export default function App() {
       result = result.filter((t) => t.priority === filterPriority);
     }
 
-    // Search
+    // Search — matches across title, description, tags, priority, and status
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (t) =>
           t.title.toLowerCase().includes(q) ||
           t.description.toLowerCase().includes(q) ||
-          t.tags.some((tag) => tag.includes(q))
+          t.tags.some((tag) => tag.includes(q)) ||
+          t.priority === q ||
+          t.status === q
       );
     }
 
@@ -457,14 +459,28 @@ export default function App() {
 
             {/* Filters & Search */}
             <div className="filters-bar">
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search tasks..."
-                aria-label="Search tasks"
-                className="search-input"
-              />
+              <div className="search-container">
+                <span className="search-icon">🔍</span>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleTaskKeyDown}
+                  placeholder="Search by title, description, tag, priority, or status…"
+                  aria-label="Search tasks"
+                  className="search-input"
+                />
+                {searchQuery && (
+                  <button
+                    className="search-clear"
+                    onClick={() => setSearchQuery('')}
+                    aria-label="Clear search"
+                    title="Clear search"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
               <div className="filter-group">
                 <select
                   value={filterStatus}
